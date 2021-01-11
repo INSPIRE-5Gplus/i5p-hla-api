@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  description: INSPIRE-5Gplus Security API
+  description: INSPIRE-5Gplus Slice Manager API
   version: 1.0.0-oas3
-  title: INSPIRE Security API
+  title: INSPIRE Slice Manager API
   contact:
     email: ricard.vilalta@cttc.es
   license:
