@@ -1,0 +1,63 @@
+{
+	"tags": [{
+		"name": "meservice",
+		"description": "MSPL-OP Enforcement"
+	}],
+	"paths": {
+		"/meservice": {
+			"delete": {
+				"description": "Remove enforced policies",
+				"responses": {
+					"200": {
+						"description": "Orchestration Policy has been removed"
+					},
+					"500": {
+						"description": "An error ocurred during the Orchestration removement Process"
+					}
+				},
+				"tags": ["meservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML MSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "ITResourceOrchestration"
+						}
+					}
+				}]
+			},
+			"post": {
+				"description": "Manage enforcement requests",
+				"responses": {
+					"200": {
+						"description": "Orchestration Policy has been enforced"
+					},
+					"500": {
+						"description": "An error ocurred during the Orchestration Process"
+					}
+				},
+				"tags": ["meservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML MSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "ITResourceOrchestration"
+						}
+					}
+				}]
+			}
+		}
+	},
+	"info": {
+		"title": "Swagger Security Orchestrator",
+		"version": "1.0.0"
+	},
+	"swagger": "2.0"
+}
