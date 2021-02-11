@@ -1,0 +1,161 @@
+{
+	"tags": [{
+		"name": "m2lservice",
+		"description": "MSPL-OP Translation"
+	}, {
+		"name": "m2eservice",
+		"description": "HSPL-OP Translation and Enforcement request"
+	}, {
+		"name": "mud2mservice",
+		"description": "MUD Translation to MSPL-OP"
+	}, {
+		"name": "health",
+		"description": "Health service"
+	}],
+	"paths": {
+		"/m2lservice": {
+			"post": {
+				"description": "Manage HSPL-OP translation requests",
+				"responses": {
+					"200": {
+						"description": "MSPL-OP Translations",
+						"examples": {
+							"application/json": {
+								"translations": {
+									"omspl_translation": {
+										"mspl_id": "MSPL_ID",
+										"mspl": "MSPL_TEXT",
+										"mspl_translations": [{
+											"mspl_id": "MSPL_ID",
+											"mspl": "MSPL_TEXT",
+											"enabler": "ENABLER_NAME",
+											"enabler_conf": "ENABLER_CONFIGURATION"
+										}]
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "An error ocurred during the MSPL-OP translation process"
+					}
+				},
+				"tags": ["m2lservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML MSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "ITResourceOrchestration"
+						}
+					}
+				}]
+			}
+		},
+		"/m2eservice": {
+			"delete": {
+				"description": "Manage MSPL-OP delete requests",
+				"responses": {
+					"200": {
+						"description": "MSPL-OP Policy has been deleted"
+					},
+					"500": {
+						"description": "An error ocurred during the MSPL-OP deletion process"
+					}
+				},
+				"tags": ["m2eservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML MSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "ITResourceOrchestration"
+						}
+					}
+				}]
+			},
+			"post": {
+				"description": "Manage MSPL-OP translation and enforcement requests",
+				"responses": {
+					"200": {
+						"description": "MSPL-OP Policy has been translated and enforced"
+					},
+					"500": {
+						"description": "An error ocurred during the MSPL-OP translation and enforcement process"
+					}
+				},
+				"tags": ["m2eservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML HSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "ITResourceOrchestration"
+						}
+					}
+				}]
+			}
+		},
+		"/mud2mservice": {
+			"post": {
+				"description": "Manage MUD to MSPL-OP translation requests",
+				"responses": {
+					"200": {
+						"description": "XML MSPL-OP Policy",
+						"content": {
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"xml": {
+										"name": "ITResourceOrchestration"
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "An error ocurred during the translation process"
+					}
+				},
+				"tags": ["mud2mservice"],
+				"consumes": ["application/json"],
+				"parameters": [{
+					"in": "body",
+					"name": "mud_file",
+					"description": "A well-formed MUD file",
+					"schema": {
+						"type": "object",
+						"example": {
+							"ietf-mud:mud": {}
+						}
+					}
+				}]
+			}
+		},
+		"/health": {
+			"get": {
+				"description": "Health service",
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": ["health"]
+			}
+		}
+	},
+	"info": {
+		"title": "Swagger M2LTranslation",
+		"version": "1.0.0"
+	},
+	"swagger": "2.0"
+}

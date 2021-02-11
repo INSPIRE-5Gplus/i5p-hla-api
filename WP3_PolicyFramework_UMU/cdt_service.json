@@ -1,0 +1,63 @@
+{
+	"tags": [{
+		"name": "mcdtservice",
+		"description": "MSPL-OP Conflict detection"
+	}, {
+		"name": "health",
+		"description": "Health service"
+	}],
+	"paths": {
+		"/mcdtservice": {
+			"post": {
+				"description": "Manage HSPL-OP conflict detection requests",
+				"responses": {
+					"200": {
+						"description": "MSPL-OP conflicts",
+						"examples": {
+							"application/json": {
+								"mspl_conflicts": [
+									["MSPL_ID", "CONFLICT_TYPE", "MSPL_ID"]
+								],
+								"mspl_dependencies": [
+									["MSPL_ID", "DEPENDENCY_TYPE", "MSPL_ID"]
+								]
+							}
+						}
+					},
+					"500": {
+						"description": "An error ocurred during the MSPL-OP translation process"
+					}
+				},
+				"tags": ["mcdtservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML MSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "ITResourceOrchestration"
+						}
+					}
+				}]
+			}
+		},
+		"/health": {
+			"get": {
+				"description": "Health service",
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": ["health"]
+			}
+		}
+	},
+	"info": {
+		"title": "Swagger MSPL Conflict detection",
+		"version": "1.0.0"
+	},
+	"swagger": "2.0"
+}

@@ -1,0 +1,109 @@
+{
+	"tags": [{
+		"name": "h2mservice",
+		"description": "HSPL-OP Refinement"
+	}, {
+		"name": "h2eservice",
+		"description": "HSPL-OP Enforcement"
+	}, {
+		"name": "health",
+		"description": "Health service"
+	}],
+	"paths": {
+		"/h2mservice": {
+			"post": {
+				"description": "Manage HSPL-OP refinement requests",
+				"responses": {
+					"200": {
+						"description": "XML MSPL-OP Policy"
+					},
+					"500": {
+						"description": "An error ocurred during the HSPL-OP refinement Process"
+					}
+				},
+				"tags": ["h2mservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "hspl-op",
+					"description": "An XML HSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"namespace": "tns",
+							"name": "Mapping"
+						}
+					}
+				}]
+			}
+		},
+		"/h2eservice": {
+			"delete": {
+				"description": "Manage HSPL-OP delete requests",
+				"responses": {
+					"200": {
+						"description": "HSPL-OP Policy has been deleted"
+					},
+					"500": {
+						"description": "An error ocurred during the HSPL-OP deletion Process"
+					}
+				},
+				"tags": ["h2eservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "hspl-op",
+					"description": "An XML HSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"namespace": "tns",
+							"name": "Mapping"
+						}
+					}
+				}]
+			},
+			"post": {
+				"description": "Manage HSPL-OP enforcement requests",
+				"responses": {
+					"200": {
+						"description": "HSPL-OP Policy has been enforced"
+					},
+					"500": {
+						"description": "An error ocurred during the HSPL-OP enforcement Process"
+					}
+				},
+				"tags": ["h2eservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "hspl-op",
+					"description": "An XML HSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"namespace": "tns",
+							"name": "Mapping"
+						}
+					}
+				}]
+			}
+		},
+		"/health": {
+			"get": {
+				"description": "Health service",
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": ["health"]
+			}
+		}
+	},
+	"info": {
+		"title": "Swagger H2MRefinement",
+		"version": "1.0.0"
+	},
+	"swagger": "2.0"
+}
