@@ -1,0 +1,162 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/anahg/TRM/1.0.0
+info:
+  description: Trust Reputation Manager (UMU) API
+  version: "1.0.0"
+  title: TRM API
+  contact:
+    email: ana.hermosilla@um.es
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+paths:
+  /trust/vnf/{vnfID}:
+    get:
+      summary: Returns the trust value (after calculating it) of the vnf with id vnfID
+      tags:
+        - VNF Trust Management
+      parameters:
+        - name: vnfID
+          in: path
+          required: true
+          description: vnf id which trust value is required
+          schema:
+            type : integer
+            format : int64
+            minimum: 1
+      responses:
+        '400':
+          description: The specified vnfID is invalid (not a number).
+        '404':
+          description: vnf with id {vnfID} not found
+        '200':
+          description: Trust Value of {vnfID}
+          content: 
+            application/json:
+              schema:
+                type: string
+    post:
+      summary: used by other TRM for adding the trust value of the vnf after calculating it.
+      tags:
+        - VNF Trust Management
+      parameters:
+        - name: vnfID
+          in: path
+          required: true
+          description: vnf id which trust value will be updated
+          schema:
+            type : integer
+            format : int64
+            minimum: 1  
+      responses:
+        '201':
+          description: value accepted
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+                
+  /trust/infrastructure/{infrastructureID}:
+    get:
+      summary: Returns the trust value (after calculating it) of the infrastructure with id infrastructureID
+      tags:
+        - Infrastructure Trust Management
+      parameters:
+        - name: infrastructureID
+          in: path
+          required: true
+          description: infrastructure id which trust value is required
+          schema:
+            type : integer
+            format : int64
+            minimum: 1
+      responses:
+        '400':
+          description: The specified infrastructureID is invalid (not a number).
+        '404':
+          description: infrastructure with id {infrastructureID} not found
+        '200':
+          description: Trust Value of {infrastructureID}
+          content: 
+            application/json:
+              schema:
+                type: string
+    post:
+      summary: used by other TRM for adding the trust value of the infrastructure after calculating it.
+      tags:
+        - Infrastructure Trust Management
+      parameters:
+        - name: infrastructureID
+          in: path
+          required: true
+          description: infrastructure id which trust value will be updated
+          schema:
+            type : integer
+            format : int64
+            minimum: 1  
+      responses:
+        '201':
+          description: value accepted
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string            
+                
+  /trust/domain/{domainID}:
+    get:
+      summary: Returns the trust value (after calculating it) of the domain with id domainID
+      tags:
+        - Domain Trust Management
+      parameters:
+        - name: domainID
+          in: path
+          required: true
+          description: infrastructure id which trust value is required
+          schema:
+            type : integer
+            format : int64
+            minimum: 1
+      responses:
+        '400':
+          description: The specified domainID is invalid (not a number).
+        '404':
+          description: domain with id {domainID} not found
+        '200':
+          description: Trust Value of {domainID}
+          content: 
+            application/json:
+              schema:
+                type: string 
+    post:
+      summary: used by other TRM for adding the trust value of the domain {domainID} after calculating it.
+      tags:
+        - Domain Trust Management
+      parameters:
+        - name: domainID
+          in: path
+          required: true
+          description: domain id which trust value will be updated
+          schema:
+            type : integer
+            format : int64
+            minimum: 1  
+      responses:
+        '201':
+          description: value accepted
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
