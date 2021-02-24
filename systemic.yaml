@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  description: INSPIRE-5Gplus Systemic API
+  version: 1.0.0-oas3
+  title: Solidshield Systemic Wrapper API
+  contact:
+    email: gianni@solidshield.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: ssw
+    description: Solidshield Systemic Wrapper
+  - name: smm
+    description: Solidshield Metadata Manager
+paths:
+  /analyse:
+    post:
+      summary: "Analyse input input binary"
+      responses:
+        '200':
+          description: "ok"
+      tags:
+        - ssw
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                binaryfile:
+                  description: "Binary file to analyse"
+                  type: object
+                  format: binary
+  /protect:
+    post:
+      summary: "Protect input input binary"
+      responses:
+        '200':
+          description: "ok"
+      tags:
+        - ssw
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                project:
+                  description: "Protection project settings"
+                  type: string
+                  format: json
+                binaryfile:
+                  description: "Binary file to protect"
+                  type: object
+                  format: binary
+  /metadata:
+    post:
+      summary: "Retrieve metadata from protected binary"
+      responses:
+        '200':
+          description: "ok"
+      tags:
+        - smm
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                binaryfile:
+                  description: "Protected binary containing metadata to extract"
+                  type: object
+                  format: binary
+    put:
+      summary: "Update metadata into protected binary"
+      responses:
+        '200':
+          description: "ok"
+      tags:
+        - smm
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                binaryfile:
+                  description: "Protected binary containing metadata to update"
+                  type: object
+                  format: binary
+                metadata:
+                  description: "New metadata content"
+                  type: string
+                  format: json
