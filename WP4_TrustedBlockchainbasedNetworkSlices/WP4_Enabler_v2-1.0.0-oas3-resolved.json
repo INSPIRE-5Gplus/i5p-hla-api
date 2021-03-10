@@ -1,0 +1,761 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "TBNS API",
+    "description": "WP4 Enabler -> Trusted Blockchain-based Network Slices",
+    "contact": {
+      "email": "palemany@cttc.cat"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0-oas3"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/apis/palemany/WP4_Enabler_v2/1.0.0-oas3"
+    }
+  ],
+  "tags": [
+    {
+      "name": "tbns",
+      "description": "trusted blockchain-based network slice"
+    }
+  ],
+  "paths": {
+    "/pdl-slice/e2e-slice": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve all e2e slices",
+        "description": "List all requested E2E Network Slices.",
+        "operationId": "get_e2e_slices",
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/e2e_Slice"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "Requests E2E Slice instance",
+        "description": "Starts the process to deploy an E2E Network Slice instance.",
+        "operationId": "post_e2e_slice",
+        "requestBody": {
+          "description": "E2E Network Slice characterisitcs, the slice-subnets selection and their interconnection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/e2e_Slice"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item created"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/pdl-slice/e2e-slice/{e2eslice_id}": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve specific e2e slice",
+        "description": "List specific requested E2E Network Slices.",
+        "operationId": "get_e2e_slice",
+        "parameters": [
+          {
+            "name": "e2eslice_id",
+            "in": "path",
+            "description": "NetSlice ID to retrieve",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e2e_Slice"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "Requests E2E Slice terminate",
+        "description": "Starts the process to terminate an E2E Network Slice",
+        "operationId": "terminate_e2e_slice",
+        "parameters": [
+          {
+            "name": "e2eslice_id",
+            "in": "path",
+            "description": "NetSlice ID to delete",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "item terminated"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/pdl-slice/slice-subnets": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve all slice-subnets",
+        "description": "List all slice-subnets (local and blockhain shared)",
+        "operationId": "get_slicesubnets",
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/slice_subnet"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      }
+    },
+    "/pdl-slice/slice-subnets/{subnet_id}": {
+      "post": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "Requests slice-subnet (NST) distribution in the Blockchain.",
+        "description": "Generates blockchain transaction to distribute slice-subnet info with the other peer domains.",
+        "operationId": "post_slicesubnet",
+        "parameters": [
+          {
+            "name": "subnet_id",
+            "in": "path",
+            "description": "Subnet (NST) ID to distribute",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Selects some of the NST parameters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/slice_subnet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item distributed"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/pdl-slice/slice-subnets/local": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve all local slice-subnets",
+        "description": "List all local slice-subnets saved in the local DB",
+        "operationId": "get_local_slicesubnets",
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/slice_subnet"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      }
+    },
+    "/pdl-slice/slice-subnets/local/{subnet_id}": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve specific local slice-subnet",
+        "description": "List specific slice-subnet saved in the locla DB.",
+        "operationId": "get_local_slicesubnet",
+        "parameters": [
+          {
+            "name": "subnet_id",
+            "in": "path",
+            "description": "NetSlice ID to retrieve",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/slice_subnet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      }
+    },
+    "/pdl-slice/slice-subnets/blockchain": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve all blockchain slice-subnets",
+        "description": "List all slice-subnets saved in the blockchain",
+        "operationId": "get_blockchain_slicesubnets",
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/slice_subnet"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      }
+    },
+    "/pdl-slice/slice-subnets/blockchain/{subnet_id}": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve specific blockchain slice-subnet",
+        "description": "List specific slice-subnet saved in the blockchain.",
+        "operationId": "get_blockchain_slicesubnet",
+        "parameters": [
+          {
+            "name": "subnet_id",
+            "in": "path",
+            "description": "Slice-subnet (NST) ID to retrieve",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/slice_subnet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      }
+    },
+    "/pdl-transport/context": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve local sdn info",
+        "description": "Retrieve the local SDN context and its topology",
+        "operationId": "get_context",
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/context_sdn"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "distributes local sdn info",
+        "description": "Requests to distribute the local SDN Context and topology information in the Blockchain.",
+        "operationId": "post_context",
+        "requestBody": {
+          "description": "SDN context characterisitcs",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/context_sdn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item created"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/pdl-transport/context/all_contexts": {
+      "get": {
+        "tags": [
+          "tbns"
+        ],
+        "summary": "retrieve all sdn contexts",
+        "description": "List all contexts (local and blockchain)",
+        "operationId": "get_contexts",
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/context_sdn"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "slice_subnet": {
+        "required": [
+          "nstd",
+          "uuid"
+        ],
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "Slice-subnet ID (a NSTD ID.)",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "nstd": {
+            "$ref": "#/components/schemas/slice_subnet_nstd"
+          },
+          "blockchain_owner": {
+            "type": "string",
+            "description": "Blockchain owner ID.",
+            "example": "85355586061788148819550363001979362868878442728"
+          },
+          "price": {
+            "type": "integer",
+            "description": "Price to rent the NSTD.",
+            "example": 4
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of the price.",
+            "example": "Eth"
+          }
+        }
+      },
+      "e2e_Slice": {
+        "required": [
+          "id",
+          "log",
+          "name",
+          "slice_subnets",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID for the E2E network Slice item.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name given to the E2E slice item.",
+            "example": "E2E blockchained slice"
+          },
+          "log": {
+            "type": "string",
+            "description": "Log information of the overal E2E Slice.",
+            "example": "E2E Network Slice INSTANTIATED."
+          },
+          "status": {
+            "type": "string",
+            "description": "Overall E2E Slice status.",
+            "example": "INSTANTIATED"
+          },
+          "slice_subnets": {
+            "type": "array",
+            "description": "A list of slice-subnet elements",
+            "items": {
+              "$ref": "#/components/schemas/e2e_Slice_slice_subnets"
+            }
+          },
+          "slice_vls": {
+            "type": "array",
+            "description": "List of Virtual Links (VL) to compose the E2E Slice and interconnect slice-subnets.",
+            "items": {
+              "$ref": "#/components/schemas/e2e_Slice_slice_vls"
+            }
+          }
+        }
+      },
+      "context_sdn": {
+        "required": [
+          "domain_id",
+          "topology"
+        ],
+        "type": "object",
+        "properties": {
+          "domain_id": {
+            "type": "string",
+            "description": "Identifies the selected domain.",
+            "example": "Optical_1"
+          },
+          "topology": {
+            "$ref": "#/components/schemas/context_sdn_topology"
+          }
+        }
+      },
+      "slice_subnet_nstd": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the NSTD.",
+            "example": "Proxy_NSTD"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the selected NSTD.",
+            "example": "2.4"
+          },
+          "vendor": {
+            "type": "string",
+            "description": "NSTD owner/designer.",
+            "example": "inspire5g-plus"
+          }
+        }
+      },
+      "e2e_Slice_slice_subnets": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifier of a subnet element known by all the blockchain peers",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the slice-subnet selected",
+            "example": "proxy_nst"
+          },
+          "log": {
+            "type": "string",
+            "description": "Specific log information with specific status infromation.",
+            "example": "Slice-subnet (from another domain) INSTANTIATED."
+          },
+          "nst_ref": {
+            "type": "string",
+            "description": "Reference uuid passed to the right Slice Mngr for this to deploy it.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "vendor": {
+            "type": "string",
+            "description": "Vendor owning the NST to be deployed.",
+            "example": "inspire_project"
+          },
+          "version": {
+            "type": "string",
+            "description": "NSt version used.",
+            "example": "3.2"
+          },
+          "price": {
+            "type": "integer",
+            "description": "Price to rent the NST.",
+            "example": 4
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of the price",
+            "example": "Eth"
+          },
+          "status": {
+            "type": "string",
+            "description": "Individual status to identify which slice-subnet fails in case of error.",
+            "example": "INSTANTIATED"
+          },
+          "blockchain_owner": {
+            "type": "string",
+            "description": "Blockchain owner ID.",
+            "example": "85355586061788148819550363001979362868878442728"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Request ID to get updated actions regarding a local slice-subnet deployment and its final instance_id.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "instance_id": {
+            "type": "string",
+            "description": "Instantiation ID (only for local deployments)",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "nfvicp_cidr": {
+            "type": "string",
+            "description": "IP address destination for the Connectivity Services flow configuration.",
+            "example": "10.120.0.1/24"
+          },
+          "nfvicp_sip": {
+            "type": "string",
+            "description": "Service Interface Point used by the slice-subnet to send its traffic out of the local domain.Identifier of a subnet element known by all the blockchain peers",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          }
+        },
+        "description": "A slice-subnet element reference information"
+      },
+      "e2e_Slice_cs_list": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID for the CS.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "domain_mngr": {
+            "type": "string",
+            "description": "Domain managing the CS.",
+            "example": "Optical_SDN"
+          },
+          "source_sip": {
+            "type": "string",
+            "description": "CS source SIP.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "destination_sip": {
+            "type": "string",
+            "description": "CS destination SIP.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "destination_cidr": {
+            "type": "string",
+            "description": "Final IP destination for the traffic in th CS.",
+            "example": "10.121.0.1/24"
+          },
+          "status": {
+            "type": "string",
+            "description": "CS individual status.",
+            "example": "READY"
+          },
+          "blockchain_owner": {
+            "type": "string",
+            "description": "CS Blockchain owner ID.",
+            "example": "85355586061788148819550363001979362868878442728"
+          }
+        },
+        "description": "A CS defines the source and destination to configure the traffic flow across SDN domains."
+      },
+      "e2e_Slice_slice_vls": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifier of a virtual link",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "source_sip": {
+            "type": "string",
+            "description": "ID for the overall source SIP in the VL.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "destination_sip": {
+            "type": "string",
+            "description": "ID for the overall destination SIP in the VL.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "cidr_1": {
+            "type": "string",
+            "description": "IP address 1 for the Connectivity Services flow configuration.",
+            "example": "10.121.0.1/24"
+          },
+          "cidr_2": {
+            "type": "string",
+            "description": "IP address 2 for the Connectivity Services flow configuration.",
+            "example": "10.121.0.0/24"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the VL configuration.",
+            "example": "READY"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Defines if the VL is Unidirectional or Bidirectional.",
+            "example": "Bidirectional"
+          },
+          "cs_list": {
+            "type": "array",
+            "description": "List of CS composing a VL",
+            "items": {
+              "$ref": "#/components/schemas/e2e_Slice_cs_list"
+            }
+          }
+        },
+        "description": "A virtual link is a set of connectivity services (1|2 uniderectional per crossed SDN domain)"
+      },
+      "context_sdn_topology_ports": {
+        "type": "object",
+        "properties": {
+          "port_id": {
+            "type": "string",
+            "description": "UUID to identify a SIP in the selected SDN context.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "destination": {
+            "type": "string",
+            "description": "UUID to identify the destination SIP.",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          }
+        },
+        "description": "SIP and CIDR pair item."
+      },
+      "context_sdn_topology": {
+        "type": "object",
+        "properties": {
+          "node_name": {
+            "type": "string",
+            "example": "Optical_SDN"
+          },
+          "ports": {
+            "type": "array",
+            "description": "List of SIP port pairs definninf the CSs across the SDN domain.",
+            "items": {
+              "$ref": "#/components/schemas/context_sdn_topology_ports"
+            }
+          }
+        },
+        "description": "Defines the topology in the SDN context domain."
+      }
+    }
+  }
+}
