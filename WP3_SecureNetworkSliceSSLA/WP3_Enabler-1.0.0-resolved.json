@@ -1,0 +1,488 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SNS4SSLA API",
+    "description": "WP3 Enabler -> Secured Network Slices for SSLA",
+    "contact": {
+      "email": "palemany@cttc.cat"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/palemany/WP3_Enabler/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "tags": [
+    {
+      "name": "sns4ssla",
+      "description": "SNS4SSLA calls"
+    }
+  ],
+  "paths": {
+    "/sec_nsi": {
+      "get": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "retrieve Sec_NSI array",
+        "description": "Returns a list with the deployed secured network slices.",
+        "operationId": "get_sec_netslice",
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sec_NSI"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "Creates a secured NetSlice",
+        "description": "Triggers a secured network slice deployment in the system.",
+        "operationId": "post_sec_netslice",
+        "requestBody": {
+          "description": "NetSlice item to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sec_NSI"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item created"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/sec_nsi/{nsi_id}": {
+      "delete": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "Deletes a secured NetSlice",
+        "description": "Deletes a secured network slice item in the system.",
+        "operationId": "delete_sec_netslice",
+        "parameters": [
+          {
+            "name": "nsi_id",
+            "in": "path",
+            "description": "Secured NetSlice ID to delete",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "item deleted"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/sec_nsi/terminate/{nsi_id}": {
+      "post": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "Terminates a secured NetSlice",
+        "description": "Triggers the termination of process of a secured network slice item in the system.",
+        "operationId": "terminates_sec_netslice",
+        "parameters": [
+          {
+            "name": "nsi_id",
+            "in": "path",
+            "description": "Secured NetSlice ID to terminate",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "item deleted"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/nst": {
+      "get": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "retrieve list nst",
+        "description": "Retrieve a list of NSTs.",
+        "operationId": "get_nsts",
+        "responses": {
+          "200": {
+            "description": "array of NST",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NST"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/nst/{nst_id}": {
+      "get": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "retrieve NST",
+        "description": "Retrieve the information of a specific NST.",
+        "operationId": "get_nst",
+        "parameters": [
+          {
+            "name": "nst_id",
+            "in": "path",
+            "description": "NetSlice ID to retrieve",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "NST",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NST"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/ssla": {
+      "get": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "retrieve list SSLA",
+        "description": "Retrieve a list of available SSLAs in the SSLA Manager.",
+        "operationId": "get_sslas",
+        "responses": {
+          "200": {
+            "description": "array of SSLA",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SSLA"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/ssla/{ssla_id}": {
+      "get": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "retrieve SSLA",
+        "description": "Retrieve the information of a specific SSLA.",
+        "operationId": "get_ssla",
+        "parameters": [
+          {
+            "name": "ssla_id",
+            "in": "path",
+            "description": "SSLA ID to retrieve",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSLA",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SSLA"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/monitoring_action": {
+      "get": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "retrieve monitoring action",
+        "description": "Retrieve list of monitoring actions from the system.",
+        "operationId": "get_monitoring_action",
+        "responses": {
+          "200": {
+            "description": "array of monitoring actions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MonitoringAction"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "creates monitoring action",
+        "description": "Adds a monitoring action to the system.",
+        "operationId": "post_monitoring_action",
+        "requestBody": {
+          "description": "Inventory item to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitoringAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item created"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/monitoring_action/{action_id}": {
+      "delete": {
+        "tags": [
+          "sns4ssla"
+        ],
+        "summary": "deletes monitoring action",
+        "description": "Deletes a monitoring actions from the system.",
+        "operationId": "delete_monitoring_action",
+        "parameters": [
+          {
+            "name": "action_id",
+            "in": "path",
+            "description": "Action ID to delete",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "item deleted"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NST": {
+        "required": [
+          "name",
+          "nst_id"
+        ],
+        "type": "object",
+        "properties": {
+          "nst_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "name": {
+            "type": "string",
+            "example": "NST1"
+          }
+        }
+      },
+      "Sec_NSI": {
+        "required": [
+          "name",
+          "netslice_id",
+          "nst_id"
+        ],
+        "type": "object",
+        "properties": {
+          "netslice_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "name": {
+            "type": "string",
+            "example": "NetSlice1"
+          },
+          "nst_id": {
+            "$ref": "#/components/schemas/NST"
+          }
+        }
+      },
+      "SSLA": {
+        "required": [
+          "name",
+          "ssla_id"
+        ],
+        "type": "object",
+        "properties": {
+          "ssla_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "name": {
+            "type": "string",
+            "example": "SSLA_FW"
+          },
+          "metrics": {
+            "type": "array",
+            "description": "List of metrics composing the SSLA.",
+            "items": {
+              "$ref": "#/components/schemas/SSLA_metrics"
+            }
+          }
+        }
+      },
+      "MonitoringAction": {
+        "required": [
+          "action_id",
+          "action_type",
+          "debug",
+          "element_ip",
+          "name",
+          "notify_violation"
+        ],
+        "type": "object",
+        "properties": {
+          "action_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "MONITOR_IDS"
+            ]
+          },
+          "element_ip": {
+            "type": "string"
+          },
+          "notify_violation": {
+            "type": "string",
+            "enum": [
+              "policy_manager"
+            ]
+          },
+          "debug": {
+            "type": "string",
+            "enum": [
+              "True",
+              "False"
+            ]
+          }
+        }
+      },
+      "SSLA_metrics": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the metric to monitor.",
+            "example": "detection_time"
+          },
+          "slo": {
+            "type": "integer",
+            "description": "Value definning the objective of the metric.",
+            "example": 5
+          }
+        },
+        "description": "A metric element"
+      }
+    }
+  }
+}
