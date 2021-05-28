@@ -1,0 +1,583 @@
+---
+openapi: 3.0.0
+info:
+  title: MMT Enabler's APIs
+  description: The APIs describes the communication between MMT modules (Probe, Operator, Root Cause Analysis) and other enablers in the project INSPIRE-5Gplus.
+  license:
+    name: Montimage
+    url: https://montimage.com/
+  version: 1.0.0
+servers:
+- url: https://montimage.com
+  description: MMT Enabler's API
+paths:
+  /alerts:
+    get:
+      tags:
+      - Security Orchestrator
+      summary: Return all alerts raised by MMT-Operator
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityReport'
+        "400":
+          description: Invalid input
+        "403":
+          description: Not found
+  /alerts/properties/{propertyID}:
+    get:
+      tags:
+      - Security Orchestrator
+      summary: Return alerts with 'propertyID'
+      parameters:
+      - name: propertyID
+        in: path
+        description: A security property
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+    delete:
+      tags:
+      - Security Orchestrator
+      summary: Delete alerts with 'propertyID'
+      parameters:
+      - name: propertyID
+        in: path
+        description: A security property
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: Success
+  /alerts/{keyword}:
+    get:
+      tags:
+      - Security Orchestrator
+      summary: Return alerts whose description contains this 'keyword'
+      parameters:
+      - name: keyword
+        in: path
+        description: Keyword
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: DDoS
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+    delete:
+      tags:
+      - Security Orchestrator
+      summary: Delete alerts whose description contains this 'keyword'
+      parameters:
+      - name: keyword
+        in: path
+        description: Keyword
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: DDoS
+      responses:
+        "204":
+          description: Success
+  /alerts/protocols/{protocolID}:
+    get:
+      tags:
+      - Security Orchestrator
+      summary: Return alerts relevant to the protocol 'protocolId'
+      parameters:
+      - name: protocolID
+        in: path
+        description: Protocol ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+    delete:
+      tags:
+      - Security Orchestrator
+      summary: Delete alerts relevant to the protocol 'protocolId'
+      parameters:
+      - name: protocolID
+        in: path
+        description: Protocol ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: Success
+  /alerts/time/{date}:
+    get:
+      tags:
+      - Security Orchestrator
+      summary: Return alerts detected on this 'date'
+      parameters:
+      - name: date
+        in: path
+        description: A specific date
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+    delete:
+      tags:
+      - Security Orchestrator
+      summary: Delete alerts detected on this 'date'
+      parameters:
+      - name: date
+        in: path
+        description: A specific date
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Success
+  /alerts/time/last/{period}:
+    get:
+      tags:
+      - Security Orchestrator
+      summary: Return alerts detected in the last 'period' minutes
+      parameters:
+      - name: period
+        in: path
+        description: Number of minutes
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+    delete:
+      tags:
+      - Security Orchestrator
+      summary: Delete alerts detected in the last 'period' minutes
+      parameters:
+      - name: period
+        in: path
+        description: Number of minutes
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: Success
+  /alerts/devices/{deviceIP}:
+    get:
+      tags:
+      - Security Orchestrator
+      summary: Return alerts of a device with this 'deviceIP'
+      parameters:
+      - name: deviceIP
+        in: path
+        description: IP address of a device
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+    delete:
+      tags:
+      - Security Orchestrator
+      summary: Delete alerts of a device with this 'deviceIP'
+      parameters:
+      - name: deviceIP
+        in: path
+        description: IP address of a device
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: Success
+  /security/policies/{hslpID}:
+    get:
+      tags:
+      - Policy Management
+      summary: Return a corresponding security rule of the requested HSLP policy
+      parameters:
+      - name: hslpID
+        in: path
+        description: A HSLP policy
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A SSLA/security rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSLA'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /security/policies/{mslpID}:
+    get:
+      tags:
+      - Policy Management
+      summary: Return a corresponding security rule of the requested MSLP policy
+      parameters:
+      - name: mslpID
+        in: path
+        description: A MSLP policy
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A SSLA/security rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSLA'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /security/apps/{appName}:
+    get:
+      tags:
+      - Policy Management
+      summary: Translate all security rules of the requested application with 'appName'
+      parameters:
+      - name: appName
+        in: path
+        description: An application
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A SSLA/security rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSLA'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /data/vnf/{vnfID}:
+    get:
+      tags:
+      - Trust Management
+      summary: Returns data of a NFV with 'vnfID'
+      parameters:
+      - name: vnfID
+        in: path
+        description: An application
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /data/infrastructure/{infrastructureID}:
+    get:
+      tags:
+      - Trust Management
+      summary: Returns data of an infrastructure with 'infrastructureID'
+      parameters:
+      - name: infrastructureID
+        in: path
+        description: An infrastructure
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /data/domain/{domainID}:
+    get:
+      tags:
+      - Trust Management
+      summary: Returns of the data of NFV
+      parameters:
+      - name: domainID
+        in: path
+        description: A domain
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /rca:
+    get:
+      tags:
+      - Root Cause Analysis
+      summary: Return alerts/potential root-causes suggested by RCA
+      responses:
+        "200":
+          description: Root-causes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RCAReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /rca/properties/{propertyID}:
+    get:
+      tags:
+      - Root Cause Analysis
+      summary: Return root-causes related to the threat in the alert identified by 'propertyID'
+      parameters:
+      - name: propertyID
+        in: path
+        description: A security property
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Root-causes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RCAReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /rca/apps/{appName}:
+    get:
+      tags:
+      - Root Cause Analysis
+      summary: Return root-causes related to the threat of an application with 'appName'
+      parameters:
+      - name: appName
+        in: path
+        description: An application
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Root-causes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RCAReport'
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+  /data/apps/{appName}:
+    get:
+      tags:
+      - Application
+      summary: Return metadata / statistics of an application with 'appName'
+      parameters:
+      - name: appName
+        in: path
+        description: An application
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: An array of metadata in json format
+        "400":
+          description: Invalid input parameter
+        "403":
+          description: Not found
+components:
+  schemas:
+    SecurityReport:
+      type: object
+      properties:
+        probeId:
+          type: integer
+          description: Identifier of a probe
+          format: int32
+        lastSeen:
+          type: integer
+          description: Timestamp
+          format: int64
+        property:
+          type: integer
+          description: Identifier of a security property
+          format: int32
+        verdict:
+          type: string
+          description: Status of an attack
+          enum:
+          - detected
+          - not_detected
+          - respected
+          - not_respected
+          - unknown
+        type:
+          type: string
+          description: Type of an attack
+          enum:
+          - attack
+          - evasion
+          - security
+          - test
+        description:
+          type: string
+          description: Description of an attack
+          example: 'Probable DoS attack: 4 TCP handshake request in less than 3ms coming from the same IP add'
+        count:
+          type: integer
+          description: Number of times an attack occurs
+          format: int32
+      description: Data of a security report
+    RCAReport:
+      type: object
+      description: Root-cause report in json format (TBD)
+    SSLA:
+      type: object
+      description: XML document (in text form) with WS-Agreement as root element defining a Security Service Level Agreement
