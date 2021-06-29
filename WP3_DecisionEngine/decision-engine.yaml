@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: A minimal v1 Decision Engine API
+  version: 0.0.2
+  description: The Decision Engine participate in a ZSM loop by driving the mitigation decision
+
+servers:
+  - url: https://de.apis.inspire-5gplus.local
+
+paths:
+  /v1/de/domain:
+    get:
+      summary: Domain context
+      description: Return information about the domain
+      responses:
+        '200':
+          description: Sucessfull operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+
+  /v1/de/domain/mitigations:
+    post:
+      summary: Proposes a mitigation action.
+      description: Post a mitigation action for validation by the Decision Engine in the scope of a domain.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reaction'
+      responses:
+        '201':
+          description: Resource created successfully
+    get:
+      summary: List of stored mitigation actions within the domain
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: An opaque mitigation ID
+
+  /v1/de/domain/mitigations/{mitigationId}:
+    parameters:
+      - name: mitigationId
+        in: path
+        required: true
+        description: The mitigation ID
+        schema:
+          $ref: '#/components/schemas/MitigationId'    
+    delete:
+      summary: Remove a mitigation
+      responses:
+        '204':
+          description: Successfull operation
+    patch:
+      summary: Update a mitigation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                overwrite_is_locally_validated:
+                  type: boolean
+                  description: If `true` the mitigation is blocked by the e2e level. If `false`, the mitigation is authorized by the e2e level.
+
+      responses:
+        '200':
+          description: Successfull operation
+
+
+  /v1/de/e2e/sync:
+    post:
+      summary: Synchronize a mitigation
+      description: Synchronize a mitigation from a local domain to the e2e domain.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mitigation'
+      responses:
+        '201':
+          description: Resource created successfully
+
+components:
+  schemas:
+    Domain:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the domain
+    Reaction:
+      type: object
+      properties:
+        alert:
+          type: object
+        mspl_escaped:
+          $ref: '#/components/schemas/MsplEscaped'
+    MsplEscaped:
+      description: The mspl XML escaped
+      type: string
+    MitigationId:
+      type: string
+      format: uuid
+    Mitigation:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/MitigationId'
+        domain:
+          type: string
+          description: The name of the local Domain where the mitigation took place.
+        is_locally_validated:
+          type: boolean
+          description: If `true` the mitigation was enacted localy in the domain. If `false`, it was rejected.
+        reaction:
+          $ref: '#/components/schemas/Reaction'
+
