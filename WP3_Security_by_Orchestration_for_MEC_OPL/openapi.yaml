@@ -1,0 +1,296 @@
+openapi: 3.0.0
+info:
+  title: Security by Orchestration enabler for MEC 
+  description: Security by Orchestration for MEC described using OpenAPI.
+  version: 0.0.1
+tags:
+  - name: SbO4M
+    description: Security by Orchestration for MEC  
+paths:
+  /placement:
+    post:
+      tags:
+      - SbO4M
+      summary: Return placement of Vertical Appications in distributed edge (MEC) environment
+      description: Return placement of Vertical Appications in distributed edge (MEC) environment
+      requestBody:
+        description: Return placement of Vertical Appications in distributed edge (MEC) environment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/topology_and_apps"
+      responses:
+        '200':    # status code
+          description: Successful response to placement of Vertcial Appications in distributed edge (MEC) environment.
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                   $ref: "#/components/schemas/placement_of_mec_apps"
+
+components:
+  schemas:
+    topology_and_apps:
+      properties:
+        topology:
+          $ref: "#/components/schemas/topology"
+        mec_applications:
+          description: Describes requirements of Vertical MEC Application and its insances
+          type: array
+          items: 
+            $ref: "#/components/schemas/mec_application"
+      required:
+      - topology
+      - mec_applications
+    topology:
+      properties:
+        regions:
+          type: array
+          items:
+            $ref: "#/components/schemas/region"
+          description: Describes regions datacenters
+        edge_servers_specification:
+          description: Describes resources of specific edge server type
+          type: array
+          items:
+             $ref: "#/components/schemas/edge_server_type"
+      required:
+      - regions
+      - edge_servers_specification
+    region:
+      properties:
+        id:
+          description: Idenfitier of Region Datacenter. This atribue shall be globally unique and starts from "R_"
+          type: string
+        latency:
+          description: Latency in this Region Datacenter
+          type: integer
+        edge_servers:
+          description: Describes list of edge servers in this Region Datacenter
+          type: array
+          items:
+            $ref: "#/components/schemas/edge_servers_in_location"
+        central_office:
+          description: Describes Central Office Datacenters which are in Region but closer to the UEs (second in the tree topology hierarchy) 
+          type: array
+          items:
+            $ref: "#/components/schemas/central_office"
+      required:
+      - id
+      - latency
+      - edge_servers
+    central_office:
+      type: object
+      properties:
+        id:
+          description: Identifier of this Central Office Datacenter. This atribue shall be globally unique and starts from "CO_" + identifier of parent Region + "_", e.g. for Central Office X in "R_1" - "CO_1_X"
+          type: string
+        latency:
+          description: Latency in this Central Office Datacenter
+          type: integer
+        edge_servers:
+          description: Describes list of edge servers in this Central Office Datacenter
+          type: array
+          items:
+            $ref: "#/components/schemas/edge_servers_in_location"
+        service_area:
+          description: Describes Service Areas which are in Central Office but closer to the UEs (third in the tree topology hierarchy) 
+          type: array
+          items:
+            $ref: "#/components/schemas/service_area"
+      required:
+      - id
+      - latency
+      - edge_servers
+    service_area:
+      description: Describes Service Area Datacenter
+      properties:
+        id:
+          description: Identifier of this Service Area Datacenter. This atribue shall be globally unique and starts from "SA_" + identifier of parent + "_", e.g. for Service Area X in "CO_1_2" - "SA_1_2_X"
+          type: string
+        latency:
+          description: Latency in this Servcie Area Datacenter
+          type: integer
+        edge_servers:
+          description: Describes list of edge servers in this Servcie Area Datacenter
+          type: array
+          items:
+            $ref: "#/components/schemas/edge_servers_in_location"
+      required:
+      - id
+      - latency
+      - edge_servers
+    edge_servers_in_location:
+      properties:
+        id:
+          description: Identifier of this edge server in datacenter. This atribue shall be globally unique and starts from "ES_" + identifier of location (region, central office or service area) + "_", e.g. for edge server X in "CO_1_2" - "ES_1_2_X"
+          type: string
+        edge_server_id:
+          description: Identifier of edge server type. This atribue shall be one of edge_server_id from edge_servers_specification
+          type: string
+      required:
+      - id
+      - edge_server_id
+    edge_server_type: 
+      type: object
+      properties:
+        edge_server_id:
+          description: Identifier of this edge server type. This atribue shall be globally unique and starts from "ES_"
+          type: string
+        name:
+          description: Name of this edge server type
+          type: string
+        vCPU:
+          description: vCPU capacity of this edge server type
+          type: integer
+        cost_vCPU:
+          description: Cost of vCPU of this edge server type
+          type: integer
+        max_OCPU: 
+          description: Overcommiting of CPU capacity of this edge server type
+          type: integer
+        RAM:
+          description: RAM capacity of this edge server type in MB
+          type: integer
+        max_ORAM:
+          description: Overcommiting of RAM capacity of this edge server type
+          type: integer
+        storage:
+          description: Storage capacity of this edge server type in MB
+          type: integer
+        GPU: 
+          description: GPU capacity of this edge server type
+          type: integer
+        HSM: 
+          description: HSM capacity of this edge server type
+          type: integer
+        power_consumption: 
+          description: Power consumption of this edge server type
+          type: integer
+        backups: 
+          description: Backup option of this edge server type
+          type: integer
+      required:
+        - edge_server_id
+        - vCPU
+        - cost_vCPU
+        - RAM
+        - storage
+        - power_consumption
+    mec_application: 
+      properties:
+        index:
+          description: Identifier of this MEC Application. This atribue shall be globally unique and starts from "MA_"
+          type: string
+        security_level:
+          description: Security level of this MEC Application
+          type: string
+        latency:
+          description: Latency between given MEC Application and served UEs in miliseconds
+          type: integer
+        isolation_level:
+          description: Reqired isolation level of this MEC Application
+          type: integer
+        qos: 
+          description: QoS class of this MEC Application
+          type: integer
+        migration_cost:
+          description: Migration cost of this MEC Application
+          type: integer
+        instances:
+          description: List of instances of this MEC Application
+          type: array
+          items:
+           $ref: "#/components/schemas/mec_application_instance"
+      required:
+        - index
+        - security_level
+        - latency
+        - isolation_level
+        - storage
+        - instances
+    mec_application_instance:
+      properties:
+        index:
+          description: Identifier of this MEC Application Instance. This atribue shall be globally unique and starts from "I_" + identifier of MEC Application + "_"; e.g. for Instance X of "MA_1" - "I_1_X"
+          type: string
+        preferred_location:
+          description: Requested location of the instance. This is one of the id of service area
+          type: string
+        vCPU:
+          description: Required vCPU capacity of this MEC Application Instance
+          type: integer
+        RAM:
+          description: Required RAM capacity of this MEC Application Instance in MB
+          type: integer
+        storage:
+          description: Required Storage capacity of this MEC Application Instance in MB
+          type: integer
+        HSM: 
+          description: Required HSM of this MEC Application Instance
+          type: integer
+        GPU:
+          description: Required GPU of this MEC Application Instance
+          type: integer
+      required:
+        - index
+        - preferred_location
+        - vCPU
+        - RAM
+        - storage
+    placement_of_mec_apps:
+      properties:
+        index:
+          description: Identifier of this MEC Application. This atribue shall be globally unique and starts from "MA_"
+          type: string
+        instances:
+          description: List of instances of this MEC Application
+          type: array
+          items:
+           $ref: "#/components/schemas/mec_application_instance_placement"
+      required:
+        - index
+        - instances
+    mec_application_instance_placement:
+      properties:
+        index:
+          description: Identifier of this MEC Application Instance. This atribue shall be globally unique and starts from "I_" + identifier of MEC Application + "_" e.g. for Instance X for "MA_1" - "I_1_X"
+          type: string
+        preferred_location:
+          description: Requested location of the instance placement. This is one of the service area - starts from ID
+          type: string
+        preferred_location_alg:
+          description: Calculated id of location of the instance.
+          type: string
+        preferred_location_serv_id:
+          description: Calculated id of edge server of the instance placement.
+          type: string
+        preferred_location_serv_id_type:
+          description: Calculated id of edge server type of the instance placement.
+          type: string
+        vCPU:
+          description: Required vCPU capacity of this MEC Application Instance
+          type: integer
+        RAM:
+          description: Required RAM capacity of this MEC Application Instance in MB
+          type: integer
+        storage:
+          description: Required Storage capacity of this MEC Application Instance in MB
+          type: integer
+        HSM: 
+          description: Required HSM of this MEC Application Instance
+          type: integer
+        GPU:
+          description: Required GPU of this MEC Application Instance
+          type: integer
+      required:
+        - index
+        - preferred_location
+        - preferred_location_alg
+        - preferred_location_serv_id
+        - preferred_location_serv_id_type
+        - vCPU
+        - RAM
+        - storage
