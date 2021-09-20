@@ -1,0 +1,716 @@
+openapi: 3.0.0
+info:
+  description: >-
+    This is the API of OptSFC, a security intelligence framework that analyses
+    the data of network slices and resources with AI/ML and proposes security
+    policies to the costumers. This framework is developed under the
+    Inspire5Gplus project (http://inspire5gplus.eu) and it main first service is
+    to propose MTD policies to the MTD controller (MOTDEC).
+  version: 1.0.0-oas3
+  title: OptSFC
+  contact:
+    email: sous@zhaw.ch
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: consumer
+    description: manage subscription of consumers (like MOTDEC)
+  - name: securityAgent
+    description: manage security agents providing threat intelligence
+  - name: attacker
+    description: manage detected attackers
+  - name: attack
+    description: manage detected attacks
+paths:
+  /consumer:
+    post:
+      tags:
+        - consumer
+      summary: Add a consumer
+      description: >-
+        A consumer subscribes to OptSFC and gives an Ipv4 addr, Ipv6 addr and a
+        public key for his authentication
+      operationId: addConsumer
+      parameters:
+        - in: query
+          name: consumerName
+          description: the name of the consumer
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: authKey
+          description: authentication key of the consumer
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: ipv4_addr
+          description: ipv4 IP address of the consumer
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: ipv6_addr
+          description: ipv6 IP address of the consumer
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+          content:
+            json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: byte
+                minItems: 16
+                maxItems: 16
+        '405':
+          description: Invalid input
+    put:
+      tags:
+        - consumer
+      summary: update consumer
+      description: >-
+        An authenticated consumer can change his IP addresses or authentication
+        key
+      operationId: updateConsumer
+      parameters:
+        - in: query
+          name: consumer_id
+          description: the ID of the consumer to update
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: auth_key
+          description: new auth_key
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: ip
+          description: new ipv4 IP
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: ipv6
+          description: new ipv6 IP
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+        - consumer_auth: []
+    get:
+      tags:
+        - consumer
+      summary: check info in OptSFC
+      description: The authorized consumer can check his own info in OptSFC
+      operationId: getConsumer
+      parameters:
+        - in: query
+          name: consumer_id
+          description: the ID of the consumer to check
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+          content:
+            object:
+              schema:
+                $ref: '#/components/schemas/Consumer'
+        '405':
+          description: Invalid input
+      security:
+        - consumer_auth: []
+    delete:
+      tags:
+        - consumer
+      summary: delete the consumer
+      description: >-
+        The authorized consumer can unsubscribe to OptSFC service by deleting
+        his instance.
+      operationId: deleteConsumer
+      parameters:
+        - in: query
+          name: consumer_id
+          description: the ID of the consumer to delete
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+        - consumer_auth: []
+  /securityAgent:
+    post:
+      tags:
+        - securityAgent
+      summary: Add a securityAgent
+      description: >-
+        A securityAgent subscribes to OptSFC and gives an Ipv4 addr, Ipv6 addr
+        and a public key for his authentication
+      operationId: addsecurityAgent
+      parameters:
+        - in: query
+          name: securityAgentName
+          description: the name of the security agent
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: authKey
+          description: authentication key of the security agent
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: ipv4_addr
+          description: ipv4 IP address of the security agent
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: ipv6_addr
+          description: ipv6 IP address of the security agent
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+          content:
+            json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: byte
+                minItems: 16
+                maxItems: 16
+        '405':
+          description: Invalid input
+    put:
+      tags:
+        - securityAgent
+      summary: update security agent
+      description: >-
+        An authenticated security agent can change his IP addresses or
+        authentication key
+      operationId: updateSecurityAgent
+      parameters:
+        - in: query
+          name: securityAgent_id
+          description: the ID of the security agent to update
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: auth_key
+          description: new auth_key
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: ip
+          description: new ipv4 IP
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: ipv6
+          description: new ipv6 IP
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+        - consumer_auth: []
+    get:
+      tags:
+        - securityAgent
+      summary: check info in OptSFC
+      description: The authorized security agent can check his own info in OptSFC
+      operationId: getSecurityAgent
+      parameters:
+        - in: query
+          name: securityAgent_id
+          description: the ID of the security agent to check
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+          content:
+            object:
+              schema:
+                $ref: '#/components/schemas/SecurityAgent'
+        '405':
+          description: Invalid input
+      security:
+        - consumer_auth: []
+    delete:
+      tags:
+        - securityAgent
+      summary: delete the security agent
+      description: >-
+        The authorized consumer can unsubscribe to OptSFC service by deleting
+        his instance.
+      operationId: deleteSecurityAgent
+      parameters:
+        - in: query
+          name: securityAgent_id
+          description: the ID of the security agent to delete
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+        - consumer_auth: []
+  /attacker:
+    post:
+      tags:
+        - attacker
+      summary: Add an attacker to the framework
+      description: An authenticated security agent adds a detected attacker to OptSFC
+      operationId: addAttacker
+      parameters:
+        - in: query
+          name: attacker
+          description: the attacker to be added
+          required: true
+          schema:
+            $ref: '#/components/schemas/Attacker'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+        '405':
+          description: Invalid input
+      security:
+        - securityAgent_auth: []
+    get:
+      tags:
+        - attacker
+      summary: get registered attackers
+      description: >-
+        An authenticated security agent or consumer get attackers saved in
+        OptSFC, and fetch them either by ID or by IP
+      operationId: getAttacker
+      parameters:
+        - in: query
+          name: attacker_id
+          description: the ID of the attacker to fetch
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: attacker_ipv4
+          description: an ipv4 IP address of the attacker to fetch
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - in: query
+          name: attacker_ipv6
+          description: an ipv6 IP address of the attacker to fetch
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+        - securityAgent_auth: []
+  /attack:
+    post:
+      tags:
+        - attack
+      summary: Add a detected attack
+      description: An authenticated security agent adds a detected attack to OptSFC
+      operationId: addAttack
+      parameters:
+        - in: query
+          name: attack
+          description: the attack to be added
+          required: true
+          schema:
+            $ref: '#/components/schemas/Attack'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+        '405':
+          description: Invalid input
+      security:
+        - securityAgent_auth: []
+    get:
+      tags:
+        - attack
+      summary: get registered attack
+      description: >-
+        An authenticated security agent or consumer get attackers saved in
+        OptSFC, and fetch them either by ID or by type or by vector protocol
+      operationId: getAttack
+      parameters:
+        - in: query
+          name: attack_id
+          description: the ID of the attacker to fetch
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: attacker_type
+          description: the type of the attacks to get
+          required: false
+          schema:
+            $ref: '#/components/schemas/AttackType'
+        - in: query
+          name: attacker_ipv6
+          description: get attack based on the vector protocol
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+        - securityAgent_auth: []
+components:
+  securitySchemes:
+    securityAgent_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://api.example.com/oauth2/authorize'
+          scopes: {}
+    consumer_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://api.example.com/oauth2/authorize'
+          scopes: {}
+  schemas:
+    AttackType:
+      type: string
+      enum:
+        - Reconaissance
+        - DoS/DDoS
+        - Intrusion
+        - Eavesdropping
+    SwitchType:
+      type: string
+      enum:
+        - openVS
+        - cisco
+        - hp
+        - windows
+    ResourceState:
+      type: string
+      enum:
+        - normal
+        - suspicious_activity
+        - under_attack
+    Consumer:
+      type: object
+      properties:
+        consumer_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        auth_key:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        ip:
+          type: integer
+          format: int32
+        ipv6:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+    SecurityAgent:
+      type: object
+      properties:
+        securityAgent_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        auth_key:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        ip:
+          type: integer
+          format: int32
+        ipv6:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+    Attacker:
+      type: object
+      properties:
+        attacker_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        attributed_ipv4:
+          type: array
+          items:
+            type: integer
+            format: int32
+        attributed_ipv6:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+    Attack:
+      type: object
+      properties:
+        attack_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        attack_type:
+          $ref: '#/components/schemas/AttackType'
+        protocol_vector:
+          description: protocol used/abused for the attack
+          type: string
+        targettedResourceId:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+    Resource:
+      type: object
+      properties:
+        resource_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        real_ip:
+          type: integer
+          format: int32
+        real_ipv6:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        slice_mngr_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        stateHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceHistory'
+    VNF:
+      allOf:
+        - $ref: '#/components/schemas/Resource'
+        - type: object
+    SDNSwitch:
+      allOf:
+        - $ref: '#/components/schemas/VNF'
+        - type: object
+          properties:
+            SwitchType:
+              $ref: '#/components/schemas/SwitchType'
+            dataflowPath:
+              type: string
+    ResourceHistory:
+      type: object
+      properties:
+        resource_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        time:
+          type: string
+          format: date-time
+        running:
+          type: boolean
+        operational:
+          type: boolean
+        state:
+          $ref: '#/components/schemas/ResourceState'
+        virtual_ip:
+          type: integer
+          format: int32
+        virtual_ipv6:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        vim_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16

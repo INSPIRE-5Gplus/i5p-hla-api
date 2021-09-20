@@ -1,0 +1,841 @@
+openapi: 3.0.0
+info:
+  description: >-
+    This is the API of MOTDEC, an MTD security framework developed under the Inspire5Gplus project (http://inspire5gplus.eu).
+  version: 1.0.0-oas3
+  title: MOTDEC
+  contact:
+    email: sous@zhaw.ch
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: resource
+    description: Operations on resources
+  - name: resourceHistory
+    description: Operations on the state of a resource
+  - name: vim
+    description: Operations on VIMs
+paths:  
+  # between MOTDEC and an authenticated Slice manager
+  /resource:
+    post:
+      tags:
+        - resource
+      summary: Add a resource to protect
+      description: 'MOTDEC keeps record of the resources to be protected. The type of the resource can be singular (VNF) or composite (network slices and network services), in which case the resource will correspond to a tree of resources. The slice manager adding the resource has to be authenticated by MOTDEC.'
+      operationId: addResource
+      parameters:
+        - in: query
+          name: resource
+          description: resource to add
+          required: true
+          schema:
+            $ref: '#/components/schemas/Resource'
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'
+    put:
+      tags:
+        - resource
+      summary: Update an existing resource
+      description: 'Authorized slice manager updates an existing resource in MOTDEC (MOTDEC might not need to know the real IP).'
+      operationId: updateResource
+      parameters:
+        - in: query
+          name: resource
+          description: resource to update
+          required: true
+          schema:
+            $ref: '#/components/schemas/Resource'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Resource not found
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'
+    get:
+      tags:
+        - resource
+      summary: Get list of resources
+      description: 'Get list of resources posted in MOTDEC. You can get resources by type (VNF, NS or NSlice) or by ID, or select the resources that are running, the resources that are not operational, the resources that are under suspicious activity.'
+      operationId: getResources
+      parameters:
+        - in: query
+          name: resource_id
+          description: ID of the resource to get
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: running
+          description: is the resouce running
+          required: false
+          schema: 
+            type: boolean
+        - in: query
+          name: operational
+          description: is the running resource operational or non-functioning (if this parameter is used, the parameter \"running\" is set to true)
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: underSuspiciousActivity
+          description: is the running resource under attack or suspicious activity
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'    
+  /resource/{resource_id}:
+    delete:
+      tags:
+        - resource
+      summary: Delete resource by resource ID
+      description: 'Authorized slice manager deletes an existing resource in MOTDEC.'
+      operationId: deleteResource
+      parameters: 
+        - in: path
+          name: resource_id
+          description: ID of the resource to remove
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+            description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Resource not found
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'
+  /resourceHistory:
+    post:
+      tags:
+        - resourceHistory
+      summary: put a new state of a resource in the history
+      description: 'Authorized slice manager inserts the new state of the resource in his history list (as an update/alert or confirmation of the MOTDEC operation after an MTD action is enforced).'
+      operationId: addResourceState
+      parameters:
+        - in: query
+          name: resourceState
+          description: state to add to the history list of a resource
+          required: true
+          schema:
+            $ref: '#/components/schemas/ResourceHistory'
+      responses:
+        '200':
+            description: successful operation
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'
+    get:
+        tags:
+          - resourceHistory
+        summary: get full history of a resource
+        description: 'Get states of a specific resource. you can get the states that has been pushed in the history after a specific date-time.'
+        operationId: getResourceHistory
+        parameters:
+          - in: query
+            name: resource_id
+            description:  ID of the resource's states
+            required: true
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+              minItems: 16
+              maxItems: 16
+          - in: query
+            name: from_date
+            description:  Starting date and time
+            required: false
+            schema:
+              type: string
+              format: date-time
+        responses:
+          '200':
+              description: successful operation
+          '405':
+            description: Invalid input
+        security:
+        - sliceMngr_auth:
+            - 'write:resources'
+            - 'read:resources'
+  /vim:
+    post:
+      tags:
+        - vim
+      summary: add a new VIM
+      description: 'The authorized Slice Manager sends to MOTDEC the records of the VIMs availables and their capacity.'
+      operationId: addVim
+      parameters:
+        - in: query
+          name: vimObj
+          description: the vim object to add
+          required: true
+          schema:
+            $ref: '#/components/schemas/Vim'
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+        - 'write:resources'
+        - 'read:resources'
+    put:
+      tags:
+        - vim
+      summary: Update an existing VIM
+      description: 'Authorized slice manager updates an existing vim info in MOTDEC.'
+      operationId: updateVim
+      parameters:
+        - in: query
+          name: vimObj
+          description: the vim object to update (identified inside the system with its ID)
+          required: true
+          schema:
+            $ref: '#/components/schemas/Vim'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: VIM not found
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'
+    get:
+      tags:
+        - vim
+      summary: Get list of VIMs
+      description: 'Get list of VIMs posted in MOTDEC. You can get VIMs by environment (openstack, azure, vmware, openvim) or by ID, or select the VIMs that are being used (hosting a resource), the VIM that are not used, and the VIMs running a resource attacked or under suspicious activity.'
+      operationId: getVim
+      parameters:
+        - in: query
+          name: vimEnv
+          description: 'type: openstack, azure, vmware, or openvim'
+          required: false
+          schema:
+            $ref: '#/components/schemas/CloudEnv'
+        - in: query
+          name: vim_id
+          description: ID of the resource to get
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: inUse
+          description: if you want VIMs in use by a resource
+          required: false
+          schema: 
+            type: boolean
+        - in: query
+          name: notInUse
+          description: if you want a VIM not in use by any resource
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: underSuspiciousActivity
+          description: if you want a VIM running one or more resources under attack or suspicious activity
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'    
+  /vim/ByCapacity:
+    get:
+      tags:
+        - vim
+      summary: Get the VIMs satisfying the required resources
+      description: 'Get list of VIMs posted in MOTDEC that have the specified environment (if parameter null all environments are accepted) and the required free vcores, memory and bandwidth'
+      operationId: getVimByCapacity
+      parameters:
+        - in: query
+          name: vimEnv
+          description: 'type: openstack, azure, vmware, or openvim'
+          required: false
+          schema:
+            $ref: '#/components/schemas/CloudEnv'
+        - in: query
+          name: minBandwidth
+          description: minimum bandwidth required in Mbps
+          required: false
+          schema:
+            type: number
+            format: double
+        - in: query
+          name: minLatency
+          description: minimum latency required in nanoseconds (ns)
+          required: false
+          schema:
+            type: number
+            format: double
+        - in: query
+          name: minStorage
+          description: minimum storage required in MBs
+          schema:  
+            type: number
+            format: double
+        - in: query
+          name: minVCores
+          description: minimum vcores required
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'    
+  /vim/{vim_id}:
+    delete:
+      tags:
+        - vim
+      summary: Delete VIM by vim_id
+      description: 'Authorized slice manager deletes an VIM in MOTDEC system.'
+      operationId: deleteVIM
+      parameters: 
+        - in: path
+          name: vim_id
+          description: ID of the VIM to remove
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+            description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: VIM not found
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'    
+          
+          
+          
+          
+          
+  # calls of optSFC to MOTDEC
+  /changeVIM:
+    put:
+      tags:
+        - optSFCtoMOTDEC
+      summary: move resource to another VIM
+      description: 'OptSFC uses this call to propose to MOTDEC to move a resource from a VIM to another with the list of VIMs available to the slice manager.'
+      operationId: changeVim
+      parameters:
+        - in: query
+          name: resource_id
+          description: ID of the resource to move
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: vim_id
+          description: ID of the new VIM
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+      responses:
+        '200':
+            description: successful operation  
+        '400':
+            description: Invalid ID supplied
+        '404':
+            description: VIM or Resource not found
+      security:
+      - optSFC_auth:
+          - 'write:actions'
+          - 'read:resources'
+  /changeVipv4:
+    put:
+      tags:
+        - optSFCtoMOTDEC
+      summary: change resource IP (ipv4)
+      description: 'OptSFC uses this call to propose to MOTDEC to change the virtual ipv4 address of a specified resource.'
+      operationId: changeVipv4
+      parameters:
+        - in: query
+          name: resource_id
+          description: ID of the resource to move
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: new_ipv4
+          description: new virtual ipv4 address
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 4
+            maxItems: 4
+      responses:
+        '200':
+            description: successful operation
+        '400':
+            description: Invalid ID or ipv4 address supplied
+        '404':
+            description: resource not found
+      security:
+        - optSFC_auth:
+            - 'write:actions'
+            - 'read:resources'
+  /changeVipv6:
+    put:
+      tags:
+        - optSFCtoMOTDEC
+      summary: change resource IP (ipv6)
+      description: 'OptSFC uses this call to propose to MOTDEC to change the ipv6 IP address of a specified resource.'
+      operationId: changeVipv6
+      parameters:
+        - in: query
+          name: resource_id
+          description: ID of the resource to move
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: new_ipv6
+          description: new virtual ipv6 address
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 8
+            maxItems: 8
+      responses:
+        '200':
+            description: successful operation
+        '400':
+            description: Invalid ID or ipv6 address supplied
+        '404':
+            description: resource not found
+      security:
+        - optSFC_auth:
+            - 'write:actions'
+            - 'read:resources'
+  /changeSwitchType:
+    put:
+      tags:
+        - optSFCtoMOTDEC
+      summary: change SwitchType
+      description: 'OptSFC uses this call to propose to MOTDEC to change a virtual switch into one with a different system.'
+      operationId: changeSwitchType
+      parameters:
+        - in: query
+          name: switch_id
+          description: ID of the switch to change
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: switchType
+          description: new switch type to set
+          required: true
+          schema:
+            $ref: '#/components/schemas/SwitchType'
+      responses:
+        '200':
+            description: successful operation
+      security:
+        - optSFC_auth:
+            - 'write:actions'
+            - 'read:resources'
+  /dataFlow:
+    post:
+      tags:
+        - dataFlow
+      summary: put a new dataFlow for a resource
+      description: 'The authorized slice manager has an SDN controller and adds a new dataFlow for a resource, by defining the SDNSwitches a packet go through (when the destination is that resource)'
+      operationId: addDataFlow
+      parameters:
+        - in: query
+          name: resource_id
+          description: ID of the switch to change
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: data_path
+          description: ordered list of SDNSwithes that the packets go though
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SDNSwitch'
+      responses:
+        '200':
+            description: successful operation
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'
+    put:
+      tags:
+        - dataFlow
+      summary: update a dataFlow of a resource
+      description: 'The authorized slice manager changes the dataFlow path of a specified resource, by defining the SDNSwitches a packet go through (when the destination is the resource)'
+      operationId: changeDataFlow
+      parameters:
+        - in: query
+          name: resource_id
+          description: ID of the switch to change
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+            minItems: 16
+            maxItems: 16
+        - in: query
+          name: data_path
+          description: ordered list of SDNSwithes that the packets go though
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SDNSwitch'
+      responses:
+        '200':
+            description: successful operation
+        '404':
+          description: Resource or data_path for the resource not found
+        '405':
+          description: Invalid input
+      security:
+      - sliceMngr_auth:
+          - 'write:resources'
+          - 'read:resources'
+            
+            
+            
+# securityDefinitions:
+#   sliceMngr_auth:
+#     type: oauth2
+#     flow: implicit
+#     scopes:
+#       'write:actions': modify/update resources info in MOTDEC 
+#       'read:resources': read your resources state
+#   optSFC_auth:
+#     type: oauth2
+#     flow: implicit
+#     scopes:
+#       'write:resources': propose MTD actions to MOTDEC 
+#       'read:resources': read data about resources from MOTDEC
+  # api_key:
+  #   type: apiKey
+  #   name: api_key
+  #   in: header
+    
+components:
+  securitySchemes:
+    sliceMngr_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://api.example.com/oauth2/authorize'
+          scopes: {}
+    optSFC_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://api.example.com/oauth2/authorize'
+          scopes: {}
+  schemas:
+    SwitchType:
+      type: string
+      enum:
+        - 'openVS'
+        - 'cisco'
+        - 'hp'
+        - 'windows'
+        
+    ResourceState:
+      type: string
+      enum:
+        - 'normal'
+        - 'suspicious_activity'
+        - 'under_attack'
+        
+    CloudEnv:
+      type: string
+      enum:
+        - 'openstack'
+        - 'openvim'
+        - 'azure'
+        - 'vmware'
+        
+    Resource:
+      type: object
+      properties:
+        resource_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        real_ip:
+          type: integer
+          format: int32
+        real_ipv6:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        slice_mngr_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        stateHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceHistory'
+            
+    VNF:
+      allOf:
+        - $ref: '#/components/schemas/Resource'
+        - type: object
+        
+    NS: # definition of a network service: https://www.etsi.org/deliver/etsi_gs/NFV/001_099/003/01.01.01_60/gs_NFV003v010101p.pdf
+      allOf:
+        - $ref: '#/components/schemas/Resource'
+        - type: object
+          properties:
+            listNS:
+              type: array
+              items:
+                $ref: '#/components/schemas/NS'
+              uniqueItems: true
+            listVnf:
+              type: array
+              items:
+                $ref: '#/components/schemas/VNF'
+          uniqueItems: true
+          
+    NSlice:
+      allOf:
+        - $ref: '#/components/schemas/Resource'
+        - type: object
+          properties:
+            listNSlice:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NSlice'
+                uniqueItems: true
+            listNS:
+              type: array
+              items:
+                $ref: '#/components/schemas/NS'
+              uniqueItems: true
+            listVnf:
+              type: array
+              items:
+                $ref: '#/components/schemas/VNF'
+              uniqueItems: true
+    
+    SDNSwitch:
+      allOf:
+        - $ref:  '#/components/schemas/VNF'
+        - type: object
+          properties:
+            SwitchType:
+              $ref: '#/components/schemas/SwitchType'
+            dataflowPath: 
+              type: string
+          
+              
+    ResourceHistory:
+      type: object
+      properties:
+        resource_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        time:
+          type: string
+          format: date-time
+        running:
+          type: boolean
+        operational:
+          type: boolean
+        state:
+          $ref: '#/components/schemas/ResourceState'
+        virtual_ip:
+          type: integer
+          format: int32
+        virtual_ipv6:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16 #substitute with a ipv6 regex format validator
+          maxItems: 16
+        vim_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+          
+    SliceMngr:
+      type: object
+      properties:
+        SliceMngr_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        listResource:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        listVim:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vim'
+            
+    Vim:  
+      type: object
+      properties:
+        vim_id:
+          type: array
+          items:
+            type: string
+            format: byte
+          minItems: 16
+          maxItems: 16
+        environement:
+          $ref: '#/components/schemas/CloudEnv'
+        bandwidth:
+          description: in Mbps
+          type: number
+          format: double
+        latency: 
+          description: in nanoseconds (ns)
+          type: number
+          format: double
+        storage:
+          description: in MBs
+          type: number
+          format: double
+        vcores:
+          type: integer
+          format: int32
