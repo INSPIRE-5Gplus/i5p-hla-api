@@ -1,0 +1,145 @@
+{
+	"tags": [{
+		"name": "e2eseservice",
+		"description": "E2E SSLA Enforcement"
+	},{
+		"name": "e2eheservice",
+		"description": "E2E HSPL-OP Enforcement"
+	},{
+		"name": "e2emeservice",
+		"description": "E2E MSPL-OP Enforcement"
+	}],
+	"paths": {
+		"/e2eseservice": {
+			"post": {
+				"description": "Manage SSLA enforcement requests",
+				"responses": {
+					"200": {
+						"description": "SSLA has been enforced"
+					},
+					"500": {
+						"description": "An error ocurred during the SSLA Orchestration Process"
+					}
+				},
+				"tags": ["sslaeservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "ssla",
+					"description": "An XML SSLA Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "SSLA"
+						}
+					}
+				}]
+			}
+		}
+	},
+	"/e2eheservice": {
+			"delete": {
+				"description": "Remove enforced policies",
+				"responses": {
+					"200": {
+						"description": "HSPL-OP has been removed"
+					},
+					"500": {
+						"description": "An error ocurred during the HSPL-OP Orchestration removement Process"
+					}
+				},
+				"tags": ["e2eheservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "hspl-op",
+					"description": "An XML HSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "HSPL-OP"
+						}
+					}
+				}]
+			},
+			"post": {
+				"description": "Manage HSPL-OP enforcement requests",
+				"responses": {
+					"200": {
+						"description": "HSPL-OP has been enforced"
+					},
+					"500": {
+						"description": "An error ocurred during the HSPL-OP Orchestration Process"
+					}
+				},
+				"tags": ["e2eheservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "hspl-op",
+					"description": "An XML HSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "HSPL-OP"
+						}
+					}
+				}]
+			}
+	},
+	"/e2emeservice": {
+			"delete": {
+				"description": "Remove enforced policies",
+				"responses": {
+					"200": {
+						"description": "MSPL-OP has been removed"
+					},
+					"500": {
+						"description": "An error ocurred during the MSPL-OP Orchestration removement Process"
+					}
+				},
+				"tags": ["e2emeservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML MSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "MSPL-OP"
+						}
+					}
+				}]
+			},
+			"post": {
+				"description": "Manage MSPL-OP enforcement requests",
+				"responses": {
+					"200": {
+						"description": "MSPL-OP has been enforced"
+					},
+					"500": {
+						"description": "An error ocurred during the MSPL-OP Orchestration Process"
+					}
+				},
+				"tags": ["e2emeservice"],
+				"consumes": ["application/xml"],
+				"parameters": [{
+					"in": "body",
+					"name": "mspl-op",
+					"description": "An XML MSPL Orchestration Policy",
+					"schema": {
+						"type": "object",
+						"xml": {
+							"name": "MSPL-OP"
+						}
+					}
+				}]
+			}
+	},
+	"info": {
+		"title": "Swagger E2E Security Orchestrator",
+		"version": "1.0.0"
+	},
+	"swagger": "2.0"
+}
